@@ -1,0 +1,259 @@
+---
+title: "Statystyczna analiza danych  - Projekt zaliczeniowy"
+author: "Mateusz Rup"
+output:
+  html_document:    
+    theme: readable
+    highlight: kate
+    fig.width: 25
+    fig.height: 10
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<style>
+h4 {
+    margin-top:2.5em
+}
+h4.author, h4.date  {
+    margin-top:0em
+}
+</style>
+
+
+### Źródło danych 
+Główny Urząd statystyczny
+https://stat.gov.pl/download/gfx/portalinformacyjny/pl/defaultaktualnosci/5498/4/137/1/tabl48_produkcja_sprzedana_przemyslu_wg_grupowan_przemyslowych.xlsx
+Wykorzystane dane pochodzą z pliku Excela pobranego ze strony Głównego Urzędu Statystycznego.
+Dane dotyczą produkcji sprzedanej w przemyśle wg grup przemysłowych.tabela zawiera informacje 
+o wartościach sprzedaży produktów przemysłowych w różnych branżach od stycznia 2010 do marca 2023. 
+
+### Wczytanie danych
+
+```{r message=FALSE}
+#Zaimportowanie biblioteki readxl
+library(readxl)
+#Wczytywanie danych
+Tabela <- read_excel("tabl48_produkcja_sprzedana_przemyslu_wg_grupowan_przemyslowych.xlsx"
+                     , skip = 4)
+```
+### Usunięcie z tabeli pustych kolumn i wierszy oraz zmiana nazw kolumn
+```{r}
+Dane1 <- Tabela[,-3]
+Dane2 <- Dane1[,-4]
+Dane3 <- Dane2[,-5]
+Dane4 <- Dane3[,-6]
+Dane5 <- Dane4[,-7]
+Dane6 <- Dane5[,-2]
+Dane7 <- Dane6[,-3]
+Dane8 <- Dane7[,-4]
+Dane9 <- Dane8[-1,]
+DANE <- Dane9
+colnames(DANE) <- c("Okres", "Inwestycyjne", "Konsumpcyjne_nietrwałe")
+DANE
+```
+### Przypisanie zmiennych oraz zamiana ich na zmienne numeryczne
+```{r}
+cecha1 <- DANE$Inwestycyjne
+cecha1 <- as.numeric(cecha1)
+cecha2 <- DANE$Konsumpcyjne_nietrwałe
+cecha2 <- as.numeric(cecha2)
+```
+### Wyznaczenie podstawowych parametrów opisowych
+#### Mediana
+```{r}
+(medianac1 <- median(cecha1))
+(medianac2 <- median(cecha2))
+```
+Mediana jest miarą położenia, która wskazuje na wartość środkową w uporządkowanym zbiorze danych. Oznacza to, że 50% obserwacji dla cechy "Inwestycyjne" ma wartość 105.5, a dla cechy "Konsumpcyjne_nietrwałe" wartość mediany wynosi 105.5.
+
+#### Średnia
+```{r}
+(sredniac1 <- mean(cecha1))
+(sredniac2 <- mean(cecha2))
+```
+Średnia arytmetyczna jest miarą centralną, która wskazuje na wartość przeciętną obserwacji w zbiorze danych. Oznacza to, że średnia wartość dla cechy "Inwestycyjne" wynosi 106.1975, a dla cechy "Konsumpcyjne_nietrwałe" wynosi 107.161.
+
+#### Minimum
+```{r}
+(minc1 <- min(cecha1))
+(minc2 <- min(cecha2))
+```
+Wartość minimalna wskazuje na najmniejszą wartość obserwacji w zbiorze danych. Oznacza to, że najniższa wartość dla cechy "Inwestycyjne" wynosi 60, a dla cechy "Konsumpcyjne_nietrwałe" wynosi 72.3.
+
+#### Maksimum
+```{r}
+(maxc1 <- max(cecha1))
+(maxc2 <- max(cecha2))
+```
+Wartość maksymalna wskazuje na największą wartość obserwacji w zbiorze danych. Oznacza to, że najwyższa wartość dla cechy "Inwestycyjne" wynosi 184.2, a dla cechy "Konsumpcyjne_nietrwałe" wynosi 152.1.
+
+#### Odchylenie standardowe
+```{r}
+(odchyleniec1 <- sd(cecha1))
+(odchyleniec2 <- sd(cecha2))
+```
+Odchylenie standardowe mierzy stopień rozproszenia danych wokół średniej. Im większe odchylenie standardowe, tym większe zróżnicowanie wartości w zbiorze danych. W przypadku cechy "Inwestycyjne" odchylenie standardowe wynosi 25.96273, a dla cechy "Konsumpcyjne_nietrwałe" wynosi 17.39869.
+
+#### Kwantyle
+```{r}
+(kwantylec1 <- quantile(cecha1))
+(kwantylec2 <- quantile(cecha2))
+```
+Kwantyle to punkty w zbiorze danych, które dzielą je na równe części. Kwantyl 50% to mediana, która dzieli zbiór danych na dwie równe części.Kwantyle są przydatne do zrozumienia rozkładu danych i identyfikowania wartości odstających. Dla cechy "Inwestycyjne" wartości kwantyli wynoszą: 0% 60.00; 25% 85.15; 50% 105.50; 75% 124.50; 100% 184.20. Natomiast dla cechy "Konsumpcyjne_nietrwałe" wartości kwantyli wynoszą: 0% 72.30; 25% 92.95; 50% 105.50; 75% 119.90; 100% 152.10. 
+
+#### Suma
+```{r}
+(sumac1 <- sum(cecha1))
+(sumac2 <- sum(cecha2))
+```
+Suma wartości cechy "Inwestycyjne" wynosi 16885.4, natomiast suma wartości cechy "Konsumpcyjne_nietrwałe" wynosi 17038.6. Oznacza to łączną wartość sprzedaży produktów przemysłowych w tych kategoriach przez cały okres analizy.
+
+#### Roztępy
+```{r}
+(rozstepc1 <- maxc1-minc1)
+(rozstepc2 <- maxc2-minc2)
+```
+Rozstęp oznacza różnicę pomiędzy największą a najmniejszą wartością. Rozstęp ten daje nam informację o zakresie zmienności danych w poszczególnych cechach. Rozstęp cechy "Inwestycyjne" wynosi 124.2, a cechy "Konsumpcyjne_nietrwałe" wynosi 79.8.
+
+#### Współczynnik zmienności
+```{r}
+(wzmiennoscic1 <- odchyleniec1/sredniac1)
+(wzmiennoscic2 <- odchyleniec2/sredniac2)
+```
+Współczynnik zmienności jest miarą względnej zmienności danych i informuje nas o stopniu zmienności w stosunku do średniej. Im większy współczynnik zmienności, tym większa zmienność danych w stosunku do średniej. W przypadku cechy "Inwestycyjne" wartość współczynnika zmienności wynosi około 0.244476, co wskazuje na umiarkowaną zmienność danych. Dla cechy "Konsumpcyjne_nietrwałe" wartość współczynnika zmienności wynosi około 0.1623603, co wskazuje na niższą zmienność danych w tej kategorii.
+
+### Graficzna prezentacja danych
+#### Histogramy
+```{r}
+# Dla cechy 1
+hist(DANE$Inwestycyjne, main = "Histogram - Inwestycyjne", xlab = "Wartość", ylab = "Częstość", breaks = 15)
+```
+
+```{r}
+# Dla cechy 2 
+hist(DANE$Konsumpcyjne_nietrwałe, main = "Histogram - Konsumpcyjne_nietrwałe", xlab = "Wartość", 
+     ylab = "Częstość", breaks = 15)
+```
+
+Histogram składa się z rzędu słupków, a każdy słupek ma swoją szerokość i wysokość. Szerokość słupka to przedział liczbowy, do którego wpadła pewna część obserwacji. Wysokość słupka to liczebność obserwacji, której wartości znalazły się w przedziale.
+
+#### Wykresy pudełkowe 
+```{r}
+# Dla cechy 1 
+boxplot(DANE$Inwestycyjne, main = "Wykres pudełkowy - Inwestycyjne", ylab = "Wartość")
+```
+
+```{r}
+# Dla cechy 2 
+boxplot(DANE$Konsumpcyjne_nietrwałe, main = "Wykres pudełkowy - Konsumpcyjne_nietrwałe", 
+        ylab = "Wartość")
+```
+
+Wykres pudełkowy (wykres skrzynkowy) służy do prezentacji wyników lub porównania danych. Zawiera informacje odnośnie położenia, rozproszenia i kształtu rozkładu danych. Ze względu na swoją kompleksowość (m.in. użycie Mediany, Kwantyla1, Kwantyla3) wykres pudełkowy jest często używany do porównania różnych rzeczy.
+
+#### Wykresy Dystrybuanty
+```{r}
+# Dla cechy 1 
+plot(ecdf(DANE$Inwestycyjne), main = "Wykres dystrybuanty - Inwestycyjne", ylab = "Dystrybuanta")
+```
+
+```{r}
+# Dla cechy 2 
+plot(ecdf(DANE$Konsumpcyjne_nietrwałe), main = "Wykres dystrybuanty - Konsumpcyjne_nietrwałe", 
+     ylab = "Dystrybuanta")
+```
+
+Wykres dystrybuanty przedstawia dystrybuantę empiryczną.Dystrybuanta empiryczna to dystrybuanta wyliczona wprost z danych. W takiej sytuacji nie znamy prawdziwego rozkładu i bazujemy tylko na dostępnych obserwacjach. Wykres dystrybuanty jest wykorzystywany do analizy rozkładu danych i oceny skupienia wartości w określonym zakresie. 
+
+#### Wykresy punktowe
+```{r}
+# Dla cechy 1
+plot(DANE$Inwestycyjne, main = "Wykres punktowy - Inwestycyjne", xlab = "Numer obserwacji", 
+     ylab = "Wartość")
+```
+
+```{r}
+# Dla cechy 2
+plot(DANE$Konsumpcyjne_nietrwałe, main = "Wykres punktowy - Inwestycyjne", xlab = "Numer obserwacji", 
+     ylab = "Wartość")
+```
+
+Każdy punkt na wykresie reprezentuje jedną obserwację. Wykres punktowy pozwala na wizualną analizę rozkładu wartości i ewentualne zidentyfikowanie wzorców, skupień lub odstających wartości. Punkty danych są wykreślane na przecięciu osi x i y, które z kolei reprezentują nasze cechy. Posiada wiele zastosowań, między innymi może posłużyć do segmentacji lub grupowania naszych danych lub wykrycia związków między danymi.
+
+#### Wykresy liniowe
+```{r}
+# Dla cechy 1
+plot(DANE$Inwestycyjne, main = "Wykres liniowy - Inwestycyjne", xlab = "Numer obserwacji", 
+     ylab = "Wartość", type = "l")
+```
+
+```{r}
+# Dla cechy 2
+plot(DANE$Konsumpcyjne_nietrwałe, main = "Wykres liniowy - Konsumpcyjne_nietrwałe", 
+     xlab = "Numer obserwacji", ylab = "Wartość", type = "l")
+```
+
+Wykres liniowy jest jednym z najbardziej popularnych wykresów statystycznych. Dane prezentowane są za pomocą linii, najczęściej łamanej. Każdy z punktów łączony jest linią od pierwszej wartości do ostatniej. Ta forma wykresu wykorzystywana jest najczęściej dla przedstawienia danych zebranych w danym okresie czasu. Możemy zaobserwować, że  Wykres liniowy umożliwia wizualną analizę trendów i wzorców w danych, co może być przydatne przy badaniu zmian w sprzedaży produktów inwestycyjnych w przemyśle na przestrzeni czasu.
+
+### Hipotezy
+#### T-studenta
+
+Dla cechy1
+```{r}
+(t.test(cecha1,mu=103))
+```
+Na podstawie p-wartości (0.1224) nie ma wystarczających dowodów, aby odrzucić hipotezę zerową.
+
+Dla cechy2
+```{r}
+(t.test(cecha2,mu=100))
+```
+Na podstawie bardzo małej p-wartości (6.383e-07) możemy odrzucić hipotezę zerową.
+
+#### Test shapiro-wilka 
+
+Dla cechy1
+```{r}
+shapiro.test(cecha1)
+```
+Na podstawie bardzo małej p-wartości (0.001179) możemy odrzucić hipotezę zerową.
+Dla cechy2
+```{r}
+shapiro.test(cecha2)
+```
+Na podstawie p-wartości (0.01335) nie ma wystarczających dowodów, aby odrzucić hipotezę zerową.
+
+### Lista komend z opisem
+Readxl - biblioteka ułatwia pobieranie danych z Excela do R. Jest przeznaczony do pracy z danymi tabelarycznymi.
+
+Read_excel - jest częścią pakietu readxl i służy do wczytywania danych z plików do środowiska R.
+
+Median - pochodzi z pakietu base. Oblicza medianę na podstawie podanych danych. Jeśli wektor danych zawiera nieparzystą liczbę obserwacji, zostanie zwrócona wartość środkowej liczby. Jeśli wektor danych zawiera parzystą liczbę obserwacji, obliczy średnią arytmetyczną dwóch środkowych liczb.
+
+Mean - pochodzi z pakietu base. Oblicza średnią arytmetyczną na podstawie podanych danych. Sumuje wartości w wektorze i dzieli przez liczbę obserwacji, aby obliczyć średnią wartość.
+
+Min - pochodzi z pakietu base. Służy do znalezienia najmniejszej wartości w wektorze lub zbiorze liczb. Może być używana do obliczania najmniejszej wartości w wektorach liczbowych lub do znalezienia najwcześniejszej daty w wektorze dat.
+
+Max - pochodzi z pakietu base. Służy do znalezienia największej wartości w wektorze lub zbiorze liczb. Może być używana do obliczania największej wartości w wektorach liczbowych lub do znalezienia najpóźniejszej daty w wektorze dat.
+
+Sd - pochodzi z pakietu base. Służy do obliczania odchylenia standardowego dla wektora liczb lub zbioru danych. Odchylenie standardowe jest miarą rozproszenia lub zmienności danych wokół ich średniej wartości. Im większe odchylenie standardowe, tym większa rozbieżność danych od ich średniej.
+
+Quantile - pochodzi z pakietu base. Służy do obliczania kwantyli, czyli punktów podziału danych na równe części procentowe.przyjmuje wektor liczb jako argument oraz opcjonalny argument probs, który określa procentowe punkty podziału. 
+
+Sum - pochodzi z pakietu base. Służy do obliczania sumy wartości w wektorze lub kolumnie danych. Przyjmuje jako argument jeden lub więcej wektorów lub kolumn danych. Może być używana do obliczania sumy wartości liczbowych w wektorze lub sumy wartości w poszczególnych kolumnach ramki danych.
+
+Hist - pochodzi z pakietu base. Służy do tworzenia histogramów na podstawie danych liczbowych. Tworzy wykres histogramu, który przedstawia rozkład częstości wystąpień danych w określonych przedziałach. Na osi x znajdują się przedziały wartości, a na osi y znajduje się liczba obserwacji należących do danego przedziału. Histogram pozwala na wizualizację rozkładu danych i identyfikację wzorców lub nietypowych wartości.
+
+Boxplot - pochodzi z pakietu base. Tworzy wykres pudełkowy, który przedstawia rozkład danych liczbowych w formie pudełka, wąsów i ewentualnych punktów odstających. Pudełko wykresu obejmuje interkwartylne zakresy danych, wąsy wskazują na rozstęp danych poza tym zakresem, a punkty odstające są wartościami odstającymi od głównego rozkładu danych.
+
+Plot - pochodzi z pakietu base. Umożliwia tworzenie różnych typów wykresów, takich jak wykresy punktowe, wykresy liniowe, wykresy słupkowe, wykresy kołowe, histogramy, wykresy pudełkowe i wiele innych. Może być używana do wizualizacji danych, prezentacji wyników analiz statystycznych, eksploracji danych oraz do tworzenia wykresów opartych na innych typach danych.
+
+Ecdf - pochodzi z pakietu base. Funkcja jest często używana do analizy statystycznej i wizualizacji danych. Generuje wykres dystrybuanty empirycznej, która przedstawia stopniową sumę względną wartości w wektorze danych. Wykres ten umożliwia ocenę rozkładu danych i porównanie ich z teoretycznym rozkładem. 
+
+T.test - pochodzi z pakietu podstawowego stats. Wyniki testu t-studenta zawierają statystykę t, wartość p i przedział ufności. Jeśli wartość p jest mniejsza niż ustalony poziom istotności, odrzucamy hipotezę zerową. W przeciwnym przypadku, nie mamy podstaw do odrzucenia hipotezy zerowej.
+
+Shapiro.test - pochodzi z pakietu podstawowego stats. Wynik testu zawiera statystykę testową W oraz wartość p, która informuje o istotności statystycznej. Jeśli wartość p jest mniejsza niż ustalony poziom istotności odrzucamy hipotezę zerową i stwierdzamy, że dane nie pochodzą z rozkładu normalnego. W przeciwnym przypadku, nie mamy podstaw do odrzucenia hipotezy zerowej i dane mogą pochodzić z rozkładu normalnego.
+
